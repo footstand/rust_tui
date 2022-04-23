@@ -1,3 +1,4 @@
+use crossterm::terminal::enable_raw_mode;
 use std::io;
 use thiserror::Error;
 
@@ -23,7 +24,30 @@ pub enum Error {
     ParseDBError(#[from] serde_json::Error),
 }
 
-fn main() {
+enum Event<I> {
+    Input(I),
+    Tick,
+}
+
+#[derive(Copy, Clone, Debug)]
+enum MenuItem {
+    Home,
+    Pets,
+}
+
+impl From<MenuItem> for usize {
+    fn from(input: MenuItem) -> usize {
+        match input {
+            MenuItem::Home => 0,
+            MenuItem::Pets => 1,
+        }
+    }
+}
+
+fn main() -> Result<(), Box<dyn std::error::Error>> {
     println!("Hello, world!");
     println!("DB_PATH: {0}", DB_PATH);
+    enable_raw_mode().expect("can run in raw mode");
+
+    Ok(())
 }
